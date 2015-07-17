@@ -1,0 +1,30 @@
+Config Parser Design:
+
+Here we have following main entities:
+1. Configuration -- This represents Complete Configuration defined in Configuration File/Files.
+2. Section --- Each Configuration file is divided into Sections. Each section will have multiple properties divided among Profiles. 
+				There will be one default profile per section. 
+3. Properties --- Each section have key-value pairs. Here Key may have multiple overrides.
+4. Overrides -- We call Each Override as Profile. 
+			For example: Configuration with override "Production" , is called Production Profile , 
+			similarly key with override "Beta" will be called "Beta Profile"
+5. Values -- Now Values dont have specific structure defined, they can be Int, Long, String, Array , Map etc. 
+			So we have defined Profile.Value structure , which allows any value to be set in it and now this Value object know type of value set. 
+			So if in future we need to provide api which returns specific type of value , 
+			we dont need to change any of the internal structure adding that specific api and asking value object for perticular type is sufficient.
+6. ConfigParser --- Config Parser is an entry point for any out side entity to load configuraiton.
+				This external entity can be Boot Loader. So it will provide configuration files to Config parser and ask it to load that configuration in memory.
+				ConfigParser does not block config loader to wait for configuration loading.
+7. ConfigParsingWorker -- ConfigParser assigns job to this worker, which takes care of actually loading configuration in memory and maintains Configuraiton States.
+8. Configuration States --- INITIALIZED, LOADING, ERROR, LOADED
+			INITIALIZED - Configuration's initial state, this means app responsible for loading configuration is in memory, but nobody has started loading configuraiton yet.
+			LOADING - This indicates, configuraiton parsing is going on and somebody is loading properties now.
+			ERROR - This indicates, configuration loading was failed.
+			LOADED - This indicates, configuration was successfully loaded in memory.
+			
+			
+Test:
+Added JUnit test class to validate scenarios agains Config file present in resources folder.
+			
+Class Diagram:
+Refer ConfigParser.ucls
